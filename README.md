@@ -1,2 +1,3 @@
 # new_app
-New flutter app
+
+An new Flutter app; ready for testing widgets.

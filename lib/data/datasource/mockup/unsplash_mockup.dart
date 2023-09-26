@@ -1,35 +1,25 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+
+import 'package:flutter/services.dart';
 
 import '../../model/photo_model.dart';
+import '../dolphin_photo_data_source.dart';
 
-class UnsplashApi {
-  final String baseUrl;
-  final String clientId;
+class UnsplashMockup implements PhotoDataSource {
+  List<PhotoModel>? _listPhotos;
+  var _index = 0;
 
-  UnsplashApi({
-    required this.baseUrl,
-    required this.clientId,
-  });
+  @override
+  Future<PhotoModel> getDolphinPhoto() async {
+    _listPhotos ??= await _loadMockupData();
+    var photo = _listPhotos![_index];
+    _index = ((_index + 1) % _listPhotos!.length);
+    return photo;
+  }
 
-  Future<PhotoModel> getDolphinPhotos() async {
-    final url = Uri.parse("$baseUrl/photos/random?query=dolphin&client_id=$clientId");
-
-    try {
-      final response = await http.get(url);
-      final urlData = json.decode(response.body);
-      print(urlData);
-      print('Response Status Code: ${response.statusCode}');
-      print('Response Body: ${response.body}');
-
-      if (response.statusCode == 200) {
-        final urlData = json.decode(response.body);
-        return PhotoModel.fromJson(urlData);
-      }
-    } catch (e) {
-      print('Error during HTTP request: $e');
-    }
-
-    throw Exception('Failed to load dolphin photo');
+  Future<List<PhotoModel>> _loadMockupData() async {
+    final jsonString = await rootBundle.loadString('assets/mockup_data.json');
+    final List<dynamic> body = json.decode(jsonString);
+    return body.map((dynamic json) => PhotoModel.fromJson(json)).toList();
   }
 }

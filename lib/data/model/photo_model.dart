@@ -12,7 +12,7 @@ class PhotoModel {
   factory PhotoModel.fromJson(Map<String, dynamic> json) {
     return PhotoModel(
       id: json['id'] as String,
-      url: json['urls']['regular'] as String,
+      url: json['urls']['small'] as String,
       description: json['description'] as String? ?? 'No Description',
     );
   }

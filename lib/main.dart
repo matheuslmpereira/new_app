@@ -1,6 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:new_app/presentation/bloc/photo_bloc.dart';
+import 'package:new_app/presentation/pages/home_page.dart';
 
-void main() {
+import 'core/config_loader.dart';
+import 'core/service_locator.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final config = await loadConfig();
+
+  setupLocator(config);
+
   runApp(const MyApp());
 }
 
@@ -15,27 +27,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.purple,
       ),
-      home: const MyHomePage(title: 'New App'),
-    );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [Text('Welcome to the new app!')],
-        ),
+      home: BlocProvider(
+        create: (context) => locator<PhotoBloc>(),
+        child: const PhotoViewerPage(),
       ),
     );
   }

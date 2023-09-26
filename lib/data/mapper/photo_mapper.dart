@@ -1,12 +1,10 @@
-import '../../domain/entities/photo.dart';
-import '../models/photo_model.dart';
+import '../../domain/entity/photo.dart';
+import '../model/photo_model.dart';
 
-class PhotoMapper {
-  Photo toDomain(PhotoModel model) {
-    return Photo(
-      id: model.id,
-      url: model.url,
-      description: model.description,
-    );
-  }
+Photo mapToDomain(PhotoModel model) {
+  return Photo(
+    id: model.id,
+    url: model.url,
+    description: model.description,
+  );
 }

@@ -22,3 +22,4 @@ doc/api/
 .idea/**/*.xml
 assets/config.json
 .flutter-plugins-dependencies
+coverage/*

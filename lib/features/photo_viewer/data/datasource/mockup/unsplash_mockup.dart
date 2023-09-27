@@ -10,7 +10,7 @@ class UnsplashMockup implements PhotoDataSource {
   var _index = 0;
 
   @override
-  Future<PhotoModel> getDolphinPhoto() async {
+  Future<PhotoModel> getPhoto() async {
     _listPhotos ??= await _loadMockupData();
     var photo = _listPhotos![_index];
     _index = ((_index + 1) % _listPhotos!.length);

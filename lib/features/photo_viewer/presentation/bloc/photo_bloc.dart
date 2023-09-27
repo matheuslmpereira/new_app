@@ -1,20 +1,20 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:new_app/presentation/bloc/photo_event.dart';
-import 'package:new_app/presentation/bloc/photo_state.dart';
 
-import '../../domain/usecase/get_dolphin_buffered_usecase.dart';
-import '../../domain/usecase/get_dolphin_usecase.dart';
+import '../../domain/usecase/get_buffered_usecase.dart';
+import '../../domain/usecase/get_photo_usecase.dart';
+import 'photo_event.dart';
+import 'photo_state.dart';
 
 class PhotoBloc extends Bloc<PhotoEvent, PhotoState> {
-  final GetDolphinPhotoUseCase _getDolphinPhotoUseCase;
+  final GetPhotoUseCase _getDolphinPhotoUseCase;
   final GetBufferedPhotosUseCase _getBufferedPhotosUseCase;
   final duration = const Duration(seconds: 2);
   Timer? _photoTimer;
 
   PhotoBloc(
-      {required GetDolphinPhotoUseCase getDolphinPhotoUseCase,
+      {required GetPhotoUseCase getDolphinPhotoUseCase,
       required GetBufferedPhotosUseCase getBufferedPhotosUseCase})
       : _getBufferedPhotosUseCase = getBufferedPhotosUseCase,
         _getDolphinPhotoUseCase = getDolphinPhotoUseCase,
@@ -28,15 +28,11 @@ class PhotoBloc extends Bloc<PhotoEvent, PhotoState> {
 
   FutureOr<void> _startFetchingPhotos(
       StartFetchingPhotos event, Emitter<PhotoState> emit) {
-    try {
-      _photoTimer = Timer.periodic(duration, (timer) async {
-        final photo = await _getDolphinPhotoUseCase.call();
-        add(TimerTriggerEvent(photo));
-      });
-      emit(LoadingPhotoState());
-    } catch (error) {
-      emit(PhotoError(error.toString()));
-    }
+    _executeTemporizedFunction(() async {
+      final photo = await _getDolphinPhotoUseCase.call();
+      add(TimerTriggerEvent(photo));
+    });
+    emit(LoadingPhotoState());
   }
 
   FutureOr<void> _timeTriggerLoad(
@@ -51,11 +47,11 @@ class PhotoBloc extends Bloc<PhotoEvent, PhotoState> {
 
   FutureOr<void> _rewindPhotos(
       RewindPhotos event, Emitter<PhotoState> emit) async {
-    _photoTimer?.cancel();
     final photos = await _getBufferedPhotosUseCase.call();
     final iterator = photos.iterator;
-    _photoTimer = Timer.periodic(duration, (timer) async {
-      if(iterator.moveNext()) {
+
+    _executeTemporizedFunction(() async {
+      if (iterator.moveNext()) {
         add(TimerTriggerEvent(iterator.current));
       } else {
         _photoTimer?.cancel();
@@ -66,5 +62,17 @@ class PhotoBloc extends Bloc<PhotoEvent, PhotoState> {
 
   FutureOr<void> _rewindFinish(RewindFinish event, Emitter<PhotoState> emit) {
     emit(PhotoInitial(message: "Cannot remember any more dolphins"));
+  }
+
+  void _executeTemporizedFunction(void Function() action) {
+    _photoTimer?.cancel();
+
+    // Call the action immediately
+    action();
+
+    // Then set up the Timer for subsequent calls
+    _photoTimer = Timer.periodic(duration, (timer) {
+      action();
+    });
   }
 }

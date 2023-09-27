@@ -1,7 +1,6 @@
-import 'package:new_app/data/datasource/buffer_photos_data_source.dart';
-
 import '../../domain/entity/photo.dart';
 import '../../domain/repository/photo_repository_interface.dart';
+import '../datasource/buffer_photos_data_source.dart';
 import '../datasource/dolphin_photo_data_source.dart';
 import '../mapper/photo_mapper.dart';
 import '../model/photo_model.dart';
@@ -16,8 +15,8 @@ class PhotoRepositoryImpl implements PhotoRepository {
   }) : _bufferPhotosDataSource = bufferPhotosDataSource, _photoDataSource = photoDataSource;
 
   @override
-  Future<Photo> getDolphinPhoto() async {
-    final PhotoModel photoModel = await _photoDataSource.getDolphinPhoto();
+  Future<Photo> getPhoto() async {
+    final PhotoModel photoModel = await _photoDataSource.getPhoto();
     _bufferPhotosDataSource.updateBuffer(photoModel);
     return mapToDomain(photoModel);
   }

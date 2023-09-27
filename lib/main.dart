@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:new_app/presentation/bloc/photo_bloc.dart';
-import 'package:new_app/presentation/pages/home_page.dart';
 
 import 'core/config_loader.dart';
 import 'core/service_locator.dart';
+import 'features/photo_viewer/presentation/bloc/photo_bloc.dart';
+import 'features/photo_viewer/presentation/pages/photo_viewer_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

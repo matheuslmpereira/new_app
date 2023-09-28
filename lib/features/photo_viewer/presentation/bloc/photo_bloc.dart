@@ -38,7 +38,7 @@ class PhotoBloc extends Bloc<PhotoEvent, PhotoState>
       _getDolphinPhotoUseCase.call().then((photo) {
         add(TimerTriggerEvent(photo));
       }).catchError((error) {
-        add(OnErrorEvent(error));
+        add(OnErrorEvent(error.toString()));
       });
     });
   }

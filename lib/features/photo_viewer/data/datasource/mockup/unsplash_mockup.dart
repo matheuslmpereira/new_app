@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import '../../model/photo_model.dart';
 import '../dolphin_photo_data_source.dart';
 
+// coverage:ignore-start
 class UnsplashMockup implements PhotoDataSource {
   List<PhotoModel>? _listPhotos;
   var _index = 0;
@@ -23,3 +24,4 @@ class UnsplashMockup implements PhotoDataSource {
     return body.map((dynamic json) => PhotoModel.fromJson(json)).toList();
   }
 }
+// coverage:ignore-end

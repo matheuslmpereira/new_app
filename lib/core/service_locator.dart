@@ -6,7 +6,7 @@ import '../features/photo_viewer/data/datasource/dolphin_photo_data_source.dart'
 import '../features/photo_viewer/data/datasource/local/buffer_photos.dart';
 import '../features/photo_viewer/data/datasource/mockup/unsplash_mockup.dart';
 import '../features/photo_viewer/data/datasource/remote/unsplash_api.dart';
-import '../features/photo_viewer/data/repository/photo_repository.dart';
+import '../features/photo_viewer/data/repository/photo_repository_impl.dart';
 import '../features/photo_viewer/domain/repository/photo_repository_interface.dart';
 import '../features/photo_viewer/domain/usecase/get_buffered_usecase.dart';
 import '../features/photo_viewer/domain/usecase/get_photo_usecase.dart';

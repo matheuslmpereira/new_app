@@ -19,17 +19,13 @@ class UnsplashApi implements PhotoDataSource {
   Future<PhotoModel> getPhoto() async {
     final url = Uri.parse("$_baseUrl/photos/random?query=dolphin&client_id=$_clientId");
 
-    try {
-      final response = await _httpClient.get(url);
+    final response = await _httpClient.get(url);
 
-      if (response.statusCode == 200) {
-        final urlData = json.decode(response.body);
-        return PhotoModel.fromJson(urlData);
-      }
-    } catch (e) {
-      throw Exception('Error during HTTP request: $e');
+    if (response.statusCode == 200) {
+      final urlData = json.decode(response.body);
+      return PhotoModel.fromJson(urlData);
+    } else {
+      throw Exception('Failed to load dolphin photo');
     }
-
-    throw Exception('Failed to load dolphin photo');
   }
 }

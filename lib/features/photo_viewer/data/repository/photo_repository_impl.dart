@@ -9,21 +9,27 @@ class PhotoRepositoryImpl implements PhotoRepository {
   final PhotoDataSource _photoDataSource;
   final BufferPhotosDataSource _bufferPhotosDataSource;
 
-  PhotoRepositoryImpl({
-    required PhotoDataSource photoDataSource,
-    required BufferPhotosDataSource bufferPhotosDataSource
-  }) : _bufferPhotosDataSource = bufferPhotosDataSource, _photoDataSource = photoDataSource;
+  PhotoRepositoryImpl(
+      {required PhotoDataSource photoDataSource,
+      required BufferPhotosDataSource bufferPhotosDataSource})
+      : _bufferPhotosDataSource = bufferPhotosDataSource,
+        _photoDataSource = photoDataSource;
 
   @override
   Future<Photo> getPhoto() async {
-    final PhotoModel photoModel = await _photoDataSource.getPhoto();
-    _bufferPhotosDataSource.updateBuffer(photoModel);
-    return mapToDomain(photoModel);
+    try {
+      final PhotoModel photoModel = await _photoDataSource.getPhoto();
+      _bufferPhotosDataSource.updateBuffer(photoModel);
+      return mapToDomain(photoModel);
+    } catch (error) {
+      return Future.error(error);
+    }
   }
 
   @override
   Future<List<Photo>> getBufferedPhotos() async {
-    final List<PhotoModel> photoModelList = await _bufferPhotosDataSource.getBufferedPhotos();
+    final List<PhotoModel> photoModelList =
+        await _bufferPhotosDataSource.getBufferedPhotos();
     return photoModelList.map(mapToDomain).toList();
   }
 }

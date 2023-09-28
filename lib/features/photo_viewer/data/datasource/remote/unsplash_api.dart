@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 
 import '../../model/photo_model.dart';
@@ -13,12 +14,14 @@ class UnsplashApi implements PhotoDataSource {
     required String baseUrl,
     required String clientId,
     required http.Client httpClient,
-  }) : _clientId = clientId, _baseUrl = baseUrl, _httpClient = httpClient;
+  })  : _clientId = clientId,
+        _baseUrl = baseUrl,
+        _httpClient = httpClient;
 
   @override
   Future<PhotoModel> getPhoto() async {
-    final url = Uri.parse("$_baseUrl/photos/random?query=dolphin&client_id=$_clientId");
-
+    final url =
+        Uri.parse("$_baseUrl/photos/random?query=dolphin&client_id=$_clientId");
     final response = await _httpClient.get(url);
 
     if (response.statusCode == 200) {

@@ -40,6 +40,18 @@ void main() {
       verify(mockPhotoDataSource.getPhoto()).called(1);
       verify(mockBufferPhotosDataSource.updateBuffer(photoModel)).called(1);
     });
+
+    test('should return Future.error when DataSource throws an api exception', () async {
+      // Arrange
+      final exception = Exception('Failed to load dolphin photo');
+      when(mockPhotoDataSource.getPhoto()).thenThrow(exception);
+
+      // Act
+      final result = repository.getPhoto();
+
+      // Assert
+      expect(result, throwsA(exception));
+    });
   });
 
   group('getBufferedPhotos', () {

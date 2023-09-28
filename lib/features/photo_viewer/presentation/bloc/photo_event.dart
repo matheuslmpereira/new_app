@@ -8,9 +8,14 @@ class StopFetchingPhotos extends PhotoEvent {}
 
 class RewindPhotos extends PhotoEvent {}
 
+class RewindFinish extends PhotoEvent {}
+
 class TimerTriggerEvent extends PhotoEvent {
   final Photo photo;
   TimerTriggerEvent(this.photo);
 }
 
-class RewindFinish extends PhotoEvent {}
+class OnErrorEvent extends PhotoEvent {
+  final String error;
+  OnErrorEvent(this.error);
+}

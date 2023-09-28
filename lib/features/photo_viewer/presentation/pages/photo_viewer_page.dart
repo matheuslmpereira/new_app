@@ -22,6 +22,11 @@ class PhotoViewerPage extends StatelessWidget {
               SnackBar(content: Text(state.message!)),
             );
           }
+          if (state is PhotoError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.error)),
+            );
+          }
         },
         builder: (context, state) {
           return Column(

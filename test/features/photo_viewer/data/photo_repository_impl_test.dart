@@ -45,7 +45,10 @@ void main() {
   group('getBufferedPhotos', () {
     test('should return buffered photos', () async {
       // Arrange
-      final photoModels = [PhotoModel(id: '123', url: 'http://example.com', description: 'Test Photo')];
+      final photoModels = [
+        PhotoModel(id: 'id1', url: 'http://example.com', description: 'Test Photo'),
+        PhotoModel(id: 'id2', url: 'http://example.com', description: 'Test Photo')
+      ];
       final photos = photoModels.map(mapToDomain).toList();
       when(mockBufferPhotosDataSource.getBufferedPhotos()).thenAnswer((_) async => photoModels);
 

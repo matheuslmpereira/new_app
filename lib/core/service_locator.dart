@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:http/http.dart' as http;
 
 import '../features/photo_viewer/data/datasource/buffer_photos_data_source.dart';
 import '../features/photo_viewer/data/datasource/dolphin_photo_data_source.dart';
@@ -18,9 +19,11 @@ void setupLocator(Config config) {
   if (config.isMockupMode) {
     locator.registerLazySingleton<PhotoDataSource>(() => UnsplashMockup());
   } else {
+    locator.registerSingleton<http.Client>(http.Client());
     locator.registerLazySingleton<PhotoDataSource>(() => UnsplashApi(
           baseUrl: config.baseUrl,
           clientId: config.clientId,
+          httpClient: locator<http.Client>()
         ));
   }
   locator.registerLazySingleton<BufferPhotosDataSource>(

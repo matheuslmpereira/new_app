@@ -1,42 +1,46 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:new_app/presentation/bloc/photo_event.dart';
-import 'package:new_app/presentation/bloc/photo_state.dart';
+import 'package:flutter/material.dart';
+import 'package:new_app/utils/temporized_function_executor.dart';
 
-import '../../domain/usecase/get_dolphin_buffered_usecase.dart';
-import '../../domain/usecase/get_dolphin_usecase.dart';
+import '../../domain/usecase/get_buffered_usecase.dart';
+import '../../domain/usecase/get_photo_usecase.dart';
+import 'photo_event.dart';
+import 'photo_state.dart';
 
-class PhotoBloc extends Bloc<PhotoEvent, PhotoState> {
-  final GetDolphinPhotoUseCase _getDolphinPhotoUseCase;
+class PhotoBloc extends Bloc<PhotoEvent, PhotoState>
+    with TemporizedFunctionExecutor {
+  final GetPhotoUseCase _getDolphinPhotoUseCase;
   final GetBufferedPhotosUseCase _getBufferedPhotosUseCase;
-  final duration = const Duration(seconds: 2);
-  Timer? _photoTimer;
+  final Duration duration;
 
   PhotoBloc(
-      {required GetDolphinPhotoUseCase getDolphinPhotoUseCase,
-      required GetBufferedPhotosUseCase getBufferedPhotosUseCase})
+      {required GetPhotoUseCase getDolphinPhotoUseCase,
+      required GetBufferedPhotosUseCase getBufferedPhotosUseCase,
+      Duration? duration})
       : _getBufferedPhotosUseCase = getBufferedPhotosUseCase,
         _getDolphinPhotoUseCase = getDolphinPhotoUseCase,
+        duration = duration ?? const Duration(seconds: 2),
         super(PhotoInitial()) {
     on<StartFetchingPhotos>(_startFetchingPhotos);
-    on<TimerTriggerEvent>(_timeTriggerLoad);
     on<StopFetchingPhotos>(_stopFetchingPhotos);
     on<RewindPhotos>(_rewindPhotos);
     on<RewindFinish>(_rewindFinish);
+    on<TimerTriggerEvent>(_timeTriggerLoad);
+    on<OnErrorEvent>(_onError);
   }
 
   FutureOr<void> _startFetchingPhotos(
       StartFetchingPhotos event, Emitter<PhotoState> emit) {
-    try {
-      _photoTimer = Timer.periodic(duration, (timer) async {
-        final photo = await _getDolphinPhotoUseCase.call();
+    emit(LoadingPhotoState());
+    executeTemporizedFunction(duration, () async {
+      _getDolphinPhotoUseCase.call().then((photo) {
         add(TimerTriggerEvent(photo));
+      }).catchError((error) {
+        add(OnErrorEvent(error));
       });
-      emit(LoadingPhotoState());
-    } catch (error) {
-      emit(PhotoError(error.toString()));
-    }
+    });
   }
 
   FutureOr<void> _timeTriggerLoad(
@@ -46,19 +50,20 @@ class PhotoBloc extends Bloc<PhotoEvent, PhotoState> {
 
   FutureOr<void> _stopFetchingPhotos(
       StopFetchingPhotos event, Emitter<PhotoState> emit) {
-    _photoTimer?.cancel();
+    photoTimer?.cancel();
   }
 
   FutureOr<void> _rewindPhotos(
       RewindPhotos event, Emitter<PhotoState> emit) async {
-    _photoTimer?.cancel();
+    emit(LoadingPhotoState());
     final photos = await _getBufferedPhotosUseCase.call();
     final iterator = photos.iterator;
-    _photoTimer = Timer.periodic(duration, (timer) async {
-      if(iterator.moveNext()) {
+
+    executeTemporizedFunction(duration, () async {
+      if (iterator.moveNext()) {
         add(TimerTriggerEvent(iterator.current));
       } else {
-        _photoTimer?.cancel();
+        photoTimer?.cancel();
         add(RewindFinish());
       }
     });
@@ -66,5 +71,11 @@ class PhotoBloc extends Bloc<PhotoEvent, PhotoState> {
 
   FutureOr<void> _rewindFinish(RewindFinish event, Emitter<PhotoState> emit) {
     emit(PhotoInitial(message: "Cannot remember any more dolphins"));
+  }
+
+  FutureOr<void> _onError(OnErrorEvent event, Emitter<PhotoState> emit) {
+    debugPrint(event.error);
+    photoTimer?.cancel();
+    emit(PhotoError("An error has occurred, please try again"));
   }
 }

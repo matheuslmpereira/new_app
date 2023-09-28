@@ -1,6 +1,6 @@
 import '../entity/photo.dart';
 
 abstract class PhotoRepository {
-  Future<Photo> getDolphinPhoto();
+  Future<Photo> getPhoto();
   Future<List<Photo>> getBufferedPhotos();
 }

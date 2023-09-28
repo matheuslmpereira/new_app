@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/photo_bloc.dart';
 import '../bloc/photo_event.dart';
 import '../bloc/photo_state.dart';
-import '../widget/dolphin_photo_widget.dart';
+import '../widget/photo_widget.dart';
 
 class PhotoViewerPage extends StatelessWidget {
   const PhotoViewerPage({Key? key}) : super(key: key);
@@ -22,31 +22,44 @@ class PhotoViewerPage extends StatelessWidget {
               SnackBar(content: Text(state.message!)),
             );
           }
+          if (state is PhotoError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.error)),
+            );
+          }
         },
         builder: (context, state) {
           return Column(
             children: [
               Expanded(
                 child: Center(
-                  child: DolphinPhotoWidget(imageUrl: state is LoadedPhotoState ? state.photo.url : null),
+                  child: PhotoWidget(imageUrl: state is LoadedPhotoState ? state.photo.url : null),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16.0).copyWith(bottom: 64.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ElevatedButton(
-                      onPressed: () => context.read<PhotoBloc>().add(StartFetchingPhotos()),
-                      child: const Text('Play'),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => context.read<PhotoBloc>().add(StartFetchingPhotos()),
+                        child: const Text('Play'),
+                      ),
                     ),
-                    ElevatedButton(
-                      onPressed: () => context.read<PhotoBloc>().add(StopFetchingPhotos()),
-                      child: const Text('Pause'),
+                    const SizedBox(width: 16.0),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => context.read<PhotoBloc>().add(StopFetchingPhotos()),
+                        child: const Text('Pause'),
+                      ),
                     ),
-                    ElevatedButton(
-                      onPressed: () => context.read<PhotoBloc>().add(RewindPhotos()),
-                      child: const Text('Rewind'),
+                    const SizedBox(width: 16.0),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => context.read<PhotoBloc>().add(RewindPhotos()),
+                        child: const Text('Rewind'),
+                      ),
                     ),
                   ],
                 ),

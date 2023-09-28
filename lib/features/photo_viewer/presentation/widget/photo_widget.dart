@@ -1,11 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-class DolphinPhotoWidget extends StatelessWidget {
+class PhotoWidget extends StatelessWidget {
   final String? imageUrl;
   final String placeHolderPath = "assets/images/dolphin_placeholder.webp";
 
-  const DolphinPhotoWidget({Key? key, this.imageUrl}) : super(key: key);
+  const PhotoWidget({Key? key, this.imageUrl}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

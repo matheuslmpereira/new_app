@@ -21,3 +21,6 @@ doc/api/
 *.js.map
 .idea/**/*.xml
 assets/config.json
+.flutter-plugins-dependencies
+coverage/*
+*.mocks.dart

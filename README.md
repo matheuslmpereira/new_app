@@ -34,9 +34,10 @@ Before you can run the application, ensure that you have the following software 
 
 ### Unit and Widget Tests
 
-Run the unit and widget tests with the following command:
+Run the unit and widget tests with the following commands:
 
 ```sh
+dart run build_runner build
 flutter test
 ```
 

@@ -1,17 +1,18 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:new_app/utils/temporized_function_executor.dart';
 
 import '../../domain/usecase/get_buffered_usecase.dart';
 import '../../domain/usecase/get_photo_usecase.dart';
 import 'photo_event.dart';
 import 'photo_state.dart';
 
-class PhotoBloc extends Bloc<PhotoEvent, PhotoState> {
+class PhotoBloc extends Bloc<PhotoEvent, PhotoState>
+    with TemporizedFunctionExecutor {
   final GetPhotoUseCase _getDolphinPhotoUseCase;
   final GetBufferedPhotosUseCase _getBufferedPhotosUseCase;
   final duration = const Duration(seconds: 2);
-  Timer? _photoTimer;
 
   PhotoBloc(
       {required GetPhotoUseCase getDolphinPhotoUseCase,
@@ -28,7 +29,7 @@ class PhotoBloc extends Bloc<PhotoEvent, PhotoState> {
 
   FutureOr<void> _startFetchingPhotos(
       StartFetchingPhotos event, Emitter<PhotoState> emit) {
-    _executeTemporizedFunction(() async {
+    executeTemporizedFunction(duration, () async {
       final photo = await _getDolphinPhotoUseCase.call();
       add(TimerTriggerEvent(photo));
     });
@@ -42,7 +43,7 @@ class PhotoBloc extends Bloc<PhotoEvent, PhotoState> {
 
   FutureOr<void> _stopFetchingPhotos(
       StopFetchingPhotos event, Emitter<PhotoState> emit) {
-    _photoTimer?.cancel();
+    photoTimer?.cancel();
   }
 
   FutureOr<void> _rewindPhotos(
@@ -50,11 +51,11 @@ class PhotoBloc extends Bloc<PhotoEvent, PhotoState> {
     final photos = await _getBufferedPhotosUseCase.call();
     final iterator = photos.iterator;
 
-    _executeTemporizedFunction(() async {
+    executeTemporizedFunction(duration, () async {
       if (iterator.moveNext()) {
         add(TimerTriggerEvent(iterator.current));
       } else {
-        _photoTimer?.cancel();
+        photoTimer?.cancel();
         add(RewindFinish());
       }
     });
@@ -62,17 +63,5 @@ class PhotoBloc extends Bloc<PhotoEvent, PhotoState> {
 
   FutureOr<void> _rewindFinish(RewindFinish event, Emitter<PhotoState> emit) {
     emit(PhotoInitial(message: "Cannot remember any more dolphins"));
-  }
-
-  void _executeTemporizedFunction(void Function() action) {
-    _photoTimer?.cancel();
-
-    // Call the action immediately
-    action();
-
-    // Then set up the Timer for subsequent calls
-    _photoTimer = Timer.periodic(duration, (timer) {
-      action();
-    });
   }
 }

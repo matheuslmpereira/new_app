@@ -13,7 +13,7 @@ Before you can run the application, ensure that you have the following software 
 
     ```sh
     git clone git@github.com:matheuslmpereira/new_app.git
-    cd your_project_name
+    cd new_app
     ```
 
 2. **Get the Dependencies:**

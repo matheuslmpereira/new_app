@@ -28,8 +28,6 @@ class PhotoWidget extends StatelessWidget {
                       placeHolderPath,
                       fit: BoxFit.cover,
                     ),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
                     fit: BoxFit.cover,
                   )
                 : Image.asset(placeHolderPath,

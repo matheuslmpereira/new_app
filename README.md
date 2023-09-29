@@ -22,7 +22,19 @@ Before you can run the application, ensure that you have the following software 
     flutter pub get
     ```
 
-3. **Run the Application:**
+2. **Set up the config.json information:**
+On new_app/assets/config.json
+    ```sh
+    {
+      "mockup": false,
+      "baseUrl": "https://api.unsplash.com",
+      "clientId": <unplash_client_id>
+    }
+    ```
+
+The mockup option allow the application to run with local json mockup response. This file was created to free test of functionalities without burn api limited calls.
+
+4. **Run the Application:**
 
     ```sh
     flutter run
@@ -52,6 +64,5 @@ flutter test --coverage
 genhtml coverage/lcov.info -o coverage/html
 open `coverage/html/index.html
 ```
-
-<img width="1088" alt="Captura de Tela 2023-09-28 às 07 46 55" src="https://github.com/matheuslmpereira/new_app/assets/11295011/abc9623d-b0db-4920-8ba6-cc3d7a8e0958">
+<img width="1087" alt="image" src="https://github.com/matheuslmpereira/new_app/assets/11295011/3c06149e-f2e7-470a-a2a0-7a5142742e1b">
 

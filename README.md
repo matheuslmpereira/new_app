@@ -56,6 +56,16 @@ flutter test
 This command will execute all the tests in the `test` directory and report the results in the terminal.
 
 ### Code Coverage
+To run the `genhtml` command, you need to have it installed on your system. It is part of the `lcov` package. Use a package manager to install it:
+
+- On macOS:
+   ```sh
+   brew install lcov
+   ```
+
+- On Ubuntu:
+   ```sh
+   sudo apt-get install lcov
 
 To generate a code coverage report, you can use the following commands:
 
